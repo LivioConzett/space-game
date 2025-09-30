@@ -1,11 +1,17 @@
 
+const body = document.querySelector('body');
+
 let CANVAS = document.querySelector('#game-canvas');
 let CONTEXT = CANVAS.getContext('2d');
+CANVAS.width = body.offsetWidth;
+CANVAS.height = body.offsetHeight;
+
+const shipSprite = document.querySelector('#ship');
 
 
 let deltaTime = 0;
 let oldTimeStamp = 0;
-const FPS = 1000 / 1;
+const FPS = 1000 / 24;
 
 let keyPress = {
     up:false,
@@ -15,28 +21,34 @@ let keyPress = {
     space:false
 }
 
-const spaceShipScale = 4;
+let directions = {
+    up:0,
+    down:0,
+    left:0,
+    right:0
+}
+
+
+const spaceShipScale = 5;
 let spaceShipInfo = {
-    img:spaceShip,
+    img:shipSprite,
     sourceImage:{
-        width: 91,
-        height: 378,
-        frameAmount: 3,
+        width: 320,
+        height: 320,
+        frameAmount: 1,
         currentFrame: 0
     },
     destImage:{
-        width: 13 * spaceShipScale,
-        height: 18 * spaceShipScale
+        width: 16 * spaceShipScale,
+        height: 16 * spaceShipScale
     },
-    maxSpeed: 300,
-    slowDown: 400,
-    speedUp: 400,
+    maxSpeed: 200,
+    slowDown: 5,
+    speedUp: 10,
     x: (body.offsetWidth / 2) - ((13 * spaceShipScale) / 2),
     y: body.offsetHeight - (18 * spaceShipScale),
     show: true,
-    health: 100,
-    ammo: 200,
-    enemyDowned: 0
+    health: 100
 }
 
 document.addEventListener('keydown', (e) => {
@@ -97,6 +109,113 @@ document.addEventListener('keyup', (e) => {
     }
 });
 
+// move the ship =====================================
+
+function goUp(){
+    spaceShipInfo.y -= directions.up;
+
+    if(spaceShipInfo.y < 0){
+        spaceShipInfo.y = 0;
+        directions.up = 0;
+    }
+}
+
+function goRight(){
+    spaceShipInfo.x += directions.right;
+
+    if((spaceShipInfo.x + spaceShipInfo.destImage.width) > CANVAS.width){
+        spaceShipInfo.x = CANVAS.width - spaceShipInfo.destImage.width;
+        directions.right = 0;
+    }
+}
+
+function goLeft(){
+    spaceShipInfo.x -= directions.left;
+
+    if(spaceShipInfo.x < 0){
+        spaceShipInfo.x = 0;
+        directions.left = 0;
+    }
+}
+
+function goDown(){
+    spaceShipInfo.y += directions.down;
+
+    if((spaceShipInfo.y + spaceShipInfo.destImage.height) > body.offsetHeight){
+        spaceShipInfo.y = body.offsetHeight - spaceShipInfo.destImage.height;
+        directions.down = 0;
+    }
+}
+
+/**
+ * Move the ship
+ */
+function moveShip(){
+    // speed up ===============================
+    if(keyPress.up && directions.up < spaceShipInfo.maxSpeed){
+        directions.up += spaceShipInfo.speedUp;
+        if(directions.up > spaceShipInfo.maxSpeed){
+            directions.up = spaceShipInfo.maxSpeed;
+        }
+    }
+
+    if(keyPress.down && directions.down < spaceShipInfo.maxSpeed){
+        directions.down += spaceShipInfo.speedUp;
+        if(directions.down > spaceShipInfo.maxSpeed){
+            directions.down = spaceShipInfo.maxSpeed;
+        }
+    }
+
+    if(keyPress.right && directions.right < spaceShipInfo.maxSpeed){
+        directions.right += spaceShipInfo.speedUp;
+        if(directions.right > spaceShipInfo.maxSpeed){
+            directions.right = spaceShipInfo.maxSpeed;
+        }
+    }
+
+    if(keyPress.left && directions.left < spaceShipInfo.maxSpeed){
+        directions.left += spaceShipInfo.speedUp;
+        if(directions.left > spaceShipInfo.maxSpeed){
+            directions.left = spaceShipInfo.maxSpeed;
+        }
+    }
+
+    // slowdown ====================================
+
+    if(!keyPress.up && directions.up > 0){
+        directions.up -= spaceShipInfo.slowDown;
+        if(directions.up < 0){
+            directions.up = 0;
+        }
+    }
+
+    if(!keyPress.down && directions.down > 0){
+        directions.down -= spaceShipInfo.slowDown;
+        if(directions.down < 0){
+            directions.down = 0;
+        }
+    }
+
+    if(!keyPress.right && directions.right > 0){
+        directions.right -= spaceShipInfo.slowDown;
+        if(directions.right < 0){
+            directions.right = 0;
+        }
+    }
+
+    if(!keyPress.left && directions.left > 0){
+        directions.left -= spaceShipInfo.slowDown;
+        if(directions.left < 0){
+            directions.left = 0;
+        }
+    }
+
+    goUp();
+    goDown();
+    goLeft();
+    goRight();
+}
+
 
 /**
  * Function to draw a sprite
@@ -117,6 +236,36 @@ function drawSprite(sprite){
 }
 
 
+/**
+ * Draw the ship
+ */
+function drawShip(){
+
+    // if(keyPress.left && !keyPress.right){
+    //     spaceShipInfo.sourceImage.currentFrame = 1;
+    // }
+    // else if(keyPress.right && !keyPress.left){
+    //     spaceShipInfo.sourceImage.currentFrame = 2;
+    // }
+    // else{
+    //     spaceShipInfo.sourceImage.currentFrame = 0;
+    // }
+
+    drawSprite(spaceShipInfo);
+}
+
+
+/**
+ * Main draw function
+ */
+function draw(){
+
+    // clear the screen
+    CONTEXT.clearRect(0,0,CANVAS.width, CANVAS.height);
+
+    drawShip();
+}
+
 
 /**
  * The main game loop
@@ -127,7 +276,8 @@ function mainGameLoop(timeStamp){
 
     if(deltaTime > FPS){
         oldTimeStamp = timeStamp;
-        console.log("hello");
+        moveShip();
+        draw();
     }
 
 

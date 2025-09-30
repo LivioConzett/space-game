@@ -38,18 +38,11 @@
 }
 
 body{
-    background-color: var(--BACKGROUND);
+    background-color: var(--MED_GREY);
     width: 100%;
     height: 100vh;
     padding: 10px;
     color: var(--FORGROUND);
-
-}
-
-#main-holder{
-    width: 100%;
-    height: 100%;
-    padding: 10px;
 }
 
 #game-canvas{
