@@ -43,8 +43,8 @@ let spaceShipInfo = {
         height: 16 * spaceShipScale
     },
     maxSpeed: 200,
-    slowDown: 5,
-    speedUp: 10,
+    slowDown: 0,
+    speedUp: 1,
     x: (body.offsetWidth / 2) - ((13 * spaceShipScale) / 2),
     y: body.offsetHeight - (18 * spaceShipScale),
     show: true,
@@ -151,30 +151,38 @@ function goDown(){
  * Move the ship
  */
 function moveShip(){
+
+    //console.log(deltaTime / 100);
+
+    const speedUp = spaceShipInfo.speedUp * (deltaTime / 100);
+    const slowDown = spaceShipInfo.slowDown * (deltaTime / 100);
+
+    //console.log(spaceShipInfo.speedUp);
+
     // speed up ===============================
     if(keyPress.up && directions.up < spaceShipInfo.maxSpeed){
-        directions.up += spaceShipInfo.speedUp;
+        directions.up += speedUp;
         if(directions.up > spaceShipInfo.maxSpeed){
             directions.up = spaceShipInfo.maxSpeed;
         }
     }
 
     if(keyPress.down && directions.down < spaceShipInfo.maxSpeed){
-        directions.down += spaceShipInfo.speedUp;
+        directions.down += speedUp;
         if(directions.down > spaceShipInfo.maxSpeed){
             directions.down = spaceShipInfo.maxSpeed;
         }
     }
 
     if(keyPress.right && directions.right < spaceShipInfo.maxSpeed){
-        directions.right += spaceShipInfo.speedUp;
+        directions.right += speedUp;
         if(directions.right > spaceShipInfo.maxSpeed){
             directions.right = spaceShipInfo.maxSpeed;
         }
     }
 
     if(keyPress.left && directions.left < spaceShipInfo.maxSpeed){
-        directions.left += spaceShipInfo.speedUp;
+        directions.left += speedUp;
         if(directions.left > spaceShipInfo.maxSpeed){
             directions.left = spaceShipInfo.maxSpeed;
         }
@@ -183,28 +191,28 @@ function moveShip(){
     // slowdown ====================================
 
     if(!keyPress.up && directions.up > 0){
-        directions.up -= spaceShipInfo.slowDown;
+        directions.up -= slowDown;
         if(directions.up < 0){
             directions.up = 0;
         }
     }
 
     if(!keyPress.down && directions.down > 0){
-        directions.down -= spaceShipInfo.slowDown;
+        directions.down -= slowDown;
         if(directions.down < 0){
             directions.down = 0;
         }
     }
 
     if(!keyPress.right && directions.right > 0){
-        directions.right -= spaceShipInfo.slowDown;
+        directions.right -= slowDown;
         if(directions.right < 0){
             directions.right = 0;
         }
     }
 
     if(!keyPress.left && directions.left > 0){
-        directions.left -= spaceShipInfo.slowDown;
+        directions.left -= slowDown;
         if(directions.left < 0){
             directions.left = 0;
         }
