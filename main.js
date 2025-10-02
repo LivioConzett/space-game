@@ -30,26 +30,13 @@ let directions = {
 
 
 const spaceShipScale = 5;
-let spaceShipInfo = {
-    img:shipSprite,
-    sourceImage:{
-        width: 320,
-        height: 320,
-        frameAmount: 1,
-        currentFrame: 0
-    },
-    destImage:{
-        width: 16 * spaceShipScale,
-        height: 16 * spaceShipScale
-    },
-    maxSpeed: 200,
-    slowDown: 0,
-    speedUp: 1,
-    x: (body.offsetWidth / 2) - ((13 * spaceShipScale) / 2),
-    y: body.offsetHeight - (18 * spaceShipScale),
-    show: true,
-    health: 100
-}
+const SHIP = new Ship(
+    shipSprite,
+    spaceShipScale,
+    (CANVAS.width / 2) - ((13 * spaceShipScale) / 2),
+    CANVAS.height - (18 * spaceShipScale)
+)
+
 
 document.addEventListener('keydown', (e) => {
 
@@ -109,121 +96,6 @@ document.addEventListener('keyup', (e) => {
     }
 });
 
-// move the ship =====================================
-
-function goUp(){
-    spaceShipInfo.y -= directions.up;
-
-    if(spaceShipInfo.y < 0){
-        spaceShipInfo.y = 0;
-        directions.up = 0;
-    }
-}
-
-function goRight(){
-    spaceShipInfo.x += directions.right;
-
-    if((spaceShipInfo.x + spaceShipInfo.destImage.width) > CANVAS.width){
-        spaceShipInfo.x = CANVAS.width - spaceShipInfo.destImage.width;
-        directions.right = 0;
-    }
-}
-
-function goLeft(){
-    spaceShipInfo.x -= directions.left;
-
-    if(spaceShipInfo.x < 0){
-        spaceShipInfo.x = 0;
-        directions.left = 0;
-    }
-}
-
-function goDown(){
-    spaceShipInfo.y += directions.down;
-
-    if((spaceShipInfo.y + spaceShipInfo.destImage.height) > body.offsetHeight){
-        spaceShipInfo.y = body.offsetHeight - spaceShipInfo.destImage.height;
-        directions.down = 0;
-    }
-}
-
-/**
- * Move the ship
- */
-function moveShip(){
-
-    //console.log(deltaTime / 100);
-
-    const speedUp = spaceShipInfo.speedUp * (deltaTime / 100);
-    const slowDown = spaceShipInfo.slowDown * (deltaTime / 100);
-
-    //console.log(spaceShipInfo.speedUp);
-
-    // speed up ===============================
-    if(keyPress.up && directions.up < spaceShipInfo.maxSpeed){
-        directions.up += speedUp;
-        if(directions.up > spaceShipInfo.maxSpeed){
-            directions.up = spaceShipInfo.maxSpeed;
-        }
-    }
-
-    if(keyPress.down && directions.down < spaceShipInfo.maxSpeed){
-        directions.down += speedUp;
-        if(directions.down > spaceShipInfo.maxSpeed){
-            directions.down = spaceShipInfo.maxSpeed;
-        }
-    }
-
-    if(keyPress.right && directions.right < spaceShipInfo.maxSpeed){
-        directions.right += speedUp;
-        if(directions.right > spaceShipInfo.maxSpeed){
-            directions.right = spaceShipInfo.maxSpeed;
-        }
-    }
-
-    if(keyPress.left && directions.left < spaceShipInfo.maxSpeed){
-        directions.left += speedUp;
-        if(directions.left > spaceShipInfo.maxSpeed){
-            directions.left = spaceShipInfo.maxSpeed;
-        }
-    }
-
-    // slowdown ====================================
-
-    if(!keyPress.up && directions.up > 0){
-        directions.up -= slowDown;
-        if(directions.up < 0){
-            directions.up = 0;
-        }
-    }
-
-    if(!keyPress.down && directions.down > 0){
-        directions.down -= slowDown;
-        if(directions.down < 0){
-            directions.down = 0;
-        }
-    }
-
-    if(!keyPress.right && directions.right > 0){
-        directions.right -= slowDown;
-        if(directions.right < 0){
-            directions.right = 0;
-        }
-    }
-
-    if(!keyPress.left && directions.left > 0){
-        directions.left -= slowDown;
-        if(directions.left < 0){
-            directions.left = 0;
-        }
-    }
-
-    goUp();
-    goDown();
-    goLeft();
-    goRight();
-}
-
 
 /**
  * Function to draw a sprite
@@ -259,7 +131,7 @@ function drawShip(){
     //     spaceShipInfo.sourceImage.currentFrame = 0;
     // }
 
-    drawSprite(spaceShipInfo);
+    drawSprite(SHIP);
 }
 
 
@@ -284,7 +156,7 @@ function mainGameLoop(timeStamp){
 
     if(deltaTime > FPS){
         oldTimeStamp = timeStamp;
-        moveShip();
+        SHIP.move(deltaTime, keyPress, CANVAS);
         draw();
     }
 
