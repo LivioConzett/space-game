@@ -11,7 +11,7 @@ const shipSprite = document.querySelector('#ship');
 
 let deltaTime = 0;
 let oldTimeStamp = 0;
-const FPS = 1000 / 24;
+const FPS = 1000 / 10;
 
 let keyPress = {
     up:false,
@@ -19,13 +19,6 @@ let keyPress = {
     left:false,
     right:false,
     space:false
-}
-
-let directions = {
-    up:0,
-    down:0,
-    left:0,
-    right:0
 }
 
 
